@@ -68,4 +68,4 @@ If **splitTimeString** is set to *true*, the time string will be divided into: s
 
 The ***jsInterval*** from the parameters a regular javascript interval that can be stopped by calling *clearInterval(jsInterval);*
 
-If no optioins will be given for the  **replaceElements** the default behavior will be to replace the numbers at the end in this example with the **id**.
+If no optioins will be given for the  **replaceElements** the default behavior will be to replace the numbers at the end in this example with the **id**, so "#timer-hours-1" will be "#timer-hours-timer1".
