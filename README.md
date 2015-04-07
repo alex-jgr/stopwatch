@@ -71,16 +71,8 @@ The ***jsInterval*** from the parameters a regular javascript interval that can 
 If no optioins will be given for the  **replaceElements** the default behavior will be to replace the numbers at the end in this example with the **id**, so "#timer-hours-1" will be "#timer-hours-timer1".
 
 The default html for the **stopwatchTemplate** looks like this: 
-<blockquote>
+
 <code>
-<div class="btn-group">
-        <button class="btn btn-success start-count" id="start-{{id}}" data-timer_id="{{id}}" type="button">"
-                <i class="glyphicon glyphicon-time"></i> <i class="glyphicon glyphicon-play"></i>
-        </button>
-        <button class="btn btn-warning stop-count disabled" id="stop-{{id}}" data-timer_id="{{id}}">
-                <i class="glyphicon glyphicon-stop"></i>
-        </button>
-</div>
-<input class="timer form-control pull-right" id="timer-{{id}}" data-limit="{{limit}}" data-elapsed="{{elapsed}}" type="text"/>
+&lt;div class=&quot;btn-group&quot;&gt; &lt;button class=&quot;btn btn-success start-count&quot; id=&quot;start-{{id}}&quot; data-timer_id=&quot;{{id}}&quot; type=&quot;button&quot;&gt;&quot; &lt;i class=&quot;glyphicon glyphicon-time&quot;&gt;&lt;/i&gt; &lt;i class=&quot;glyphicon glyphicon-play&quot;&gt;&lt;/i&gt; &lt;/button&gt; &lt;button class=&quot;btn btn-warning stop-count disabled&quot; id=&quot;stop-{{id}}&quot; data-timer_id=&quot;{{id}}&quot;&gt; &lt;i class=&quot;glyphicon glyphicon-stop&quot;&gt;&lt;/i&gt; &lt;/button&gt; &lt;/div&gt; &lt;input class=&quot;timer form-control pull-right&quot; id=&quot;timer-{{id}}&quot; data-limit=&quot;{{limit}}&quot; data-elapsed=&quot;{{elapsed}}&quot; type=&quot;text&quot;/&gt;
 </code>
-</blockquote>
+
