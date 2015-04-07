@@ -32,7 +32,6 @@
                 limit:              parseInt($(element).data("limit")),
                 elapsed:            parseInt($(element).data("elapsed")),
                 countdown:          $(element).data("countdown"),
-                hiddenInput:        true,
                 onLimitReached:     function(){},
                 onStart:            function(){},
                 onStop:             function(){},
