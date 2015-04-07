@@ -71,7 +71,7 @@ The ***jsInterval*** from the parameters a regular javascript interval that can 
 If no optioins will be given for the  **replaceElements** the default behavior will be to replace the numbers at the end in this example with the **id**, so "#timer-hours-1" will be "#timer-hours-timer1".
 
 The default html for the **stopwatchTemplate** looks like this: 
-<pre>
+<blockquote>
 <code>
 <div class="btn-group">
         <button class="btn btn-success start-count" id="start-{{id}}" data-timer_id="{{id}}" type="button">"
@@ -83,4 +83,4 @@ The default html for the **stopwatchTemplate** looks like this:
 </div>
 <input class="timer form-control pull-right" id="timer-{{id}}" data-limit="{{limit}}" data-elapsed="{{elapsed}}" type="text"/>
 </code>
-</pre>
+</blockquote>
