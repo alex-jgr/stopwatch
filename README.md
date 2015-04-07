@@ -61,6 +61,6 @@ If **countdown**  is set to *true*, the counting will go down starting from the 
 If **splitTimeString** is set to *true*, the time string will be divided into: sign, hours, minutes and seconds and the plugin will fill the ***replaceElements*** defined for these fields with their values. If it is set to false, only the ***timeValue*** will be used. The ***type*** of the replaceElements determines whether to use the jQuery val() function to fill the value of the given replaceElement or the jQuery html() function to fill the inner html of that element.
 
 **onStart** - callback to execute when the timer starts counting.
-**onStop** - callback to execute when the timer stops counting
+**onStop** - callback to execute when the timer stops counting.
 **onLimitReached** - callback to execute when the **limit** has been reached. 
 the ***jsInterval*** from the parameters a regular javascript interval that can be stopped by calling *clearInterval(jsInterval);*
