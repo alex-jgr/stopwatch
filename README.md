@@ -72,6 +72,7 @@ If no optioins will be given for the  **replaceElements** the default behavior w
 
 The default html for the **stopwatchTemplate** looks like this: 
 <pre>
+<code>
 <div class="btn-group">
         <button class="btn btn-success start-count" id="start-{{id}}" data-timer_id="{{id}}" type="button">"
                 <i class="glyphicon glyphicon-time"></i> <i class="glyphicon glyphicon-play"></i>
@@ -81,4 +82,5 @@ The default html for the **stopwatchTemplate** looks like this:
         </button>
 </div>
 <input class="timer form-control pull-right" id="timer-{{id}}" data-limit="{{limit}}" data-elapsed="{{elapsed}}" type="text"/>
+</code>
 </pre>
