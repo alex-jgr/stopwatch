@@ -1,6 +1,6 @@
 (function ( $ ) {
     var timers = [];
-    $.fn.stopwatch = function(options) {
+    $.fn.stopwatch = function(options, value) {
         var defaultTemplate = "<div class=\"btn-group\">"
                             +      "<button class=\"btn btn-success start-count\" id=\"start-{{id}}\" data-timer_id=\"{{id}}\" type=\"button\">"
                             +          "<i class=\"glyphicon glyphicon-time\"></i> <i class=\"glyphicon glyphicon-play\"></i>"
@@ -9,25 +9,38 @@
                             +          "<i class=\"glyphicon glyphicon-stop\"></i>"
                             +      "</button>"
                             +  "</div>"
-                            +  "<input class=\"timer form-control pull-right\" id=\"timer-{{id}}\" data-limit=\"{{limit}}\" data-elapsed=\"{{elapsed}}\" type=\"text\"/>";
-        var settings;
-        
+                            +  "<input disabled class=\"timer form-control pull-right\" id=\"timer-{{id}}\" data-limit=\"{{limit}}\" data-elapsed=\"{{elapsed}}\" type=\"text\"/>";
+                
         if (!$(this).hasClass("has-timer")) {
-            var timer = new initStopwatch(this, options);
+            var timer = new Stopwatch(this, options);
             timers[timer.timerId] = timer;
         } else {
-            if (options === "getTimeValue") {
-                return timers[$(this).attr("id")].getTimeValue;
+            if (value) {
+                switch (options) {
+                    case "elapsed" : 
+                        timers[$(this).attr("id")].elapsed(value);
+                        break;
+                    case "limit"   : 
+                        timers[$(this).attr("id")].limit(value);
+                        break;
+                    case "countdown" : 
+                        timers[$(this).attr("id")].countdown(value);
+                        break;
+                }
+            } else {
+                switch (options) {
+                    case "getTimeValue" : return timers[$(this).attr("id")].getTimeValue();       break;
+                    case "elapsed"      : return timers[$(this).attr("id")].elapsed();   break;
+                    case "limit"        : return timers[$(this).attr("id")].limit();     break;
+                }
             }
         }
-               
-
         
-        function initStopwatch(element, options) {
+        function Stopwatch(element, options) {
             
             var elementId = $(element).data("id");
             
-            settings = $.extend({
+            var settings = $.extend({
                 id :                elementId,
                 limit:              parseInt($(element).data("limit")),
                 elapsed:            parseInt($(element).data("elapsed")),
@@ -60,7 +73,7 @@
                     }
                 }
             }, options);
-            
+
             if ($(element).html().length < 10) {
                 var timeValue = getTimeValue();
                 var html = settings.stopwatchTemplate.replace(/{{id}}/g, settings.id);
@@ -116,13 +129,13 @@
                         time    = new Date((settings.limit - settings.elapsed) * 1000);
                     } else {
                         time    = new Date((settings.limit - settings.elapsed) * (-1000));
-                        minus   = "-";
+                        minus   = "- ";
                     }
                 } else {
                     time    = new Date(settings.elapsed * 1000);
                 }
                 if (settings.limit === settings.elapsed) {
-                    settings.onLimitReached(settings.id);
+                    settings.onLimitReached(settings.id, settings.counter);
                 }
                 hours   = time.getUTCHours();
                 minutes = time.getUTCMinutes();
@@ -141,11 +154,64 @@
                     return this.timeValue;
                 }
             }
+            this.elapsed = function(value) {
+                if (value) {
+                    settings.elapsed = value;
+                } else {
+                    return settings.elapsed;
+                }
+            };
             
-            this.getTimeValue = getTimeValue();
+            this.limit  = function(value) {
+                 if (value) {
+                    settings.limit = value;
+                } else {
+                    return settings.limit;
+                }
+            };
             
+            this.countdown  = function(value) {
+                 if (value) {
+                    settings.countdown = value;
+                } else {
+                    return settings.countdown;
+                }
+            };
+            
+            this.getTimeValue   = function(){
+                var time, hours, minutes, seconds;
+                var minus = "";
+                if (settings.countdown === true) {
+                    if (settings.limit >= settings.elapsed) {
+                        time    = new Date((settings.limit - settings.elapsed) * 1000);
+                    } else {
+                        time    = new Date((settings.limit - settings.elapsed) * (-1000));
+                        minus   = "- ";
+                    }
+                } else {
+                    time    = new Date(settings.elapsed * 1000);
+                }
+                if (settings.limit <= settings.elapsed) {
+                    settings.onLimitReached(settings.id, settings.counter);
+                }
+                hours   = time.getUTCHours();
+                minutes = time.getUTCMinutes();
+                seconds = time.getUTCSeconds();
+                
+                if (settings.splitTimeString) {
+                    return {
+                        hours:      (hours < 10)    ? ("0" + hours)     : hours,
+                        minutes:    (minutes < 10)  ? ("0" + minutes)   : minutes,
+                        seconds:    (seconds < 10)  ? ("0" + seconds)   : seconds,
+                        sign:       minus
+                    };
+                } else {
+                    return minus + ((hours < 10) ? ("0" + hours) : hours) + ":" + ((minutes < 10) ? ("0" + minutes) : minutes) + ":" + ((seconds < 10) ? ("0" + seconds) : seconds);
+                }
+            };
+
             function count(){
-                var display = getTimeValue();
+                var display = $this.getTimeValue();
                 $("#timer-" + settings.id).val(display);
                 settings.elapsed ++;
             }
@@ -157,7 +223,7 @@
                 settings.counter = startCounting();
                 $("#start-" + settings.id).addClass("disabled");
                 $("#stop-" + settings.id).removeClass("disabled");
-                settings.onStart(settings.id);
+                settings.onStart(settings.id, settings.counter);
             });
 
             $(".task-timer-" + settings.id).on("click", "#stop-" + settings.id, function(){
@@ -168,6 +234,8 @@
             });
             
             this.timerId = "task-timer-" + settings.id;
+            
+            var $this = this;
         }
     };
 }(jQuery));
