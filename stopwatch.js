@@ -26,6 +26,10 @@
                     case "countdown" : 
                         timers[$(this).attr("id")].countdown(value);
                         break;
+                    case "remove" :
+                        $(this).removeClass("has-timer");
+                        delete timers[$(this).attr("id")];
+                        break;
                 }
             } else {
                 switch (options) {
