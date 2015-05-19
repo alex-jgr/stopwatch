@@ -1,9 +1,11 @@
 (function ( $ ) {
     var timers = [];
     $.fn.stopwatch = function(options, value) {
+        var _this = this;
+        
         var defaultTemplate = "<div class=\"btn-group\">"
                             +      "<button class=\"btn btn-success start-count\" id=\"start-{{id}}\" data-timer_id=\"{{id}}\" type=\"button\">"
-                            +          "<i class=\"glyphicon glyphicon-time\"></i> <i class=\"glyphicon glyphicon-play\"></i>"
+                            +          "<i class=\"glyphicon glyphicon-play\"></i>"
                             +      "</button>"
                             +      "<button class=\"btn btn-warning stop-count disabled\" id=\"stop-{{id}}\" data-timer_id=\"{{id}}\">"
                             +          "<i class=\"glyphicon glyphicon-stop\"></i>"
@@ -13,32 +15,51 @@
                 
         if (!$(this).hasClass("has-timer")) {
             var timer = new Stopwatch(this, options);
-            timers[timer.timerId] = timer;
+            //timers[timer.timerId] = timer;
+            timers.push(timer);
         } else {
+            var timerIndex = null;
+            $(timers).each(function(index){
+                if (this.timerId === $(_this).attr("id")) {
+                    timerIndex = index;
+                }
+            });
+            
             if (value) {
                 switch (options) {
                     case "elapsed" : 
-                        timers[$(this).attr("id")].elapsed(value);
+                        timers[timerIndex].elapsed(value);
                         break;
                     case "limit"   : 
-                        timers[$(this).attr("id")].limit(value);
+                        timers[timerIndex].limit(value);
                         break;
                     case "countdown" : 
-                        timers[$(this).attr("id")].countdown(value);
+                        timers[timerIndex].countdown(value);
                         break;
                     case "remove" :
                         $(this).removeClass("has-timer");
-                        delete timers[$(this).attr("id")];
+                        timers.splice(timerIndex, 1);
                         break;
                 }
             } else {
                 switch (options) {
-                    case "getTimeValue" : return timers[$(this).attr("id")].getTimeValue();       break;
-                    case "elapsed"      : return timers[$(this).attr("id")].elapsed();   break;
-                    case "limit"        : return timers[$(this).attr("id")].limit();     break;
+                    case "getTimeValue"     : return timers[timerIndex].getTimeValue();     break;
+                    case "elapsed"          : return timers[timerIndex].elapsed();          break;
+                    case "limit"            : return timers[timerIndex].limit();            break;
+                    case "getInstanceCount" : return getInstanceCount();                    break;
                 }
             }
         }
+        
+        function getInstanceCount() {
+            var count = 0;
+            $.each(timers, function(index){
+                if (this.isRunning()) {
+                    count ++;
+                }
+            });
+            return count;
+        };
         
         function Stopwatch(element, options) {
             
@@ -49,6 +70,8 @@
                 limit:              parseInt($(element).data("limit")),
                 elapsed:            parseInt($(element).data("elapsed")),
                 countdown:          $(element).data("countdown"),
+                isRunning:          false,
+                onCreate:           function(){},
                 onLimitReached:     function(){},
                 onStart:            function(){},
                 onStop:             function(){},
@@ -133,7 +156,7 @@
                         time    = new Date((settings.limit - settings.elapsed) * 1000);
                     } else {
                         time    = new Date((settings.limit - settings.elapsed) * (-1000));
-                        minus   = "- ";
+                        minus   = "-";
                     }
                 } else {
                     time    = new Date(settings.elapsed * 1000);
@@ -190,7 +213,7 @@
                         time    = new Date((settings.limit - settings.elapsed) * 1000);
                     } else {
                         time    = new Date((settings.limit - settings.elapsed) * (-1000));
-                        minus   = "- ";
+                        minus   = "-";
                     }
                 } else {
                     time    = new Date(settings.elapsed * 1000);
@@ -213,6 +236,10 @@
                     return minus + ((hours < 10) ? ("0" + hours) : hours) + ":" + ((minutes < 10) ? ("0" + minutes) : minutes) + ":" + ((seconds < 10) ? ("0" + seconds) : seconds);
                 }
             };
+            
+            this.isRunning = function() {
+                return settings.isRunning;
+            };
 
             function count(){
                 var display = $this.getTimeValue();
@@ -227,6 +254,7 @@
                 settings.counter = startCounting();
                 $("#start-" + settings.id).addClass("disabled");
                 $("#stop-" + settings.id).removeClass("disabled");
+                settings.isRunning = true;
                 settings.onStart(settings.id, settings.counter);
             });
 
@@ -234,10 +262,13 @@
                 clearInterval(settings.counter);
                 $("#start-" + settings.id).removeClass("disabled");
                 $("#stop-" + settings.id).addClass("disabled");
+                settings.isRunning = false;
                 settings.onStop({id: settings.id, elapsed: settings.elapsed});
             });
             
             this.timerId = "task-timer-" + settings.id;
+            
+            settings.onCreate(settings.id);
             
             var $this = this;
         }
